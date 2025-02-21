@@ -4,10 +4,174 @@ module;
 // #define GLM_EXT_INLINE_NAMESPACE to inline glm::ext into glm
 // #define GLM_GTX_INLINE_NAMESPACE to inline glm::gtx into glm
 
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#define GLM_ENABLE_EXPERIMENTAL
+#define GLM_EXT_INLINE_NAMESPACE
+#define GLM_GTX_INLINE_NAMESPACE
+#define GLM_GTC_INLINE_NAMESPACE
+
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-export module glm;
+export module Math;
+export namespace Math = glm;
+
+export namespace glm {
+
+	template <typename Vec>
+	struct box
+	{
+		using T = typename Vec::value_type;
+		static constexpr int n = Vec().length(); // Dimension (e.g., 2 or 3)
+
+		Vec mins, maxs;
+
+		box() = default;
+
+		box(const Vec& mins, const Vec& maxs) : mins(mins), maxs(maxs) {}
+
+		box(int numPoints, const Vec* points)
+		{
+			if (numPoints == 0) {
+				mins = Vec(std::numeric_limits<T>::max());
+				maxs = Vec(std::numeric_limits<T>::lowest());
+				return;
+			}
+			mins = points[0];
+			maxs = points[0];
+			for (int i = 1; i < numPoints; ++i) {
+				mins = glm::min(mins, points[i]);
+				maxs = glm::max(maxs, points[i]);
+			}
+		}
+
+		template<typename U>
+		box(const box<glm::vec<n, U, glm::defaultp>>& b)
+			: mins(b.mins), maxs(b.maxs) {
+		}
+
+		static box empty() { return box(Vec(std::numeric_limits<T>::max()), Vec(std::numeric_limits<T>::lowest())); }
+		bool isEmpty() const { return glm::any(glm::greaterThan(mins, maxs)); }
+		bool contains(const Vec& point) const { return glm::all(glm::lessThanEqual(mins, point)) && glm::all(glm::lessThanEqual(point, maxs)); }
+		// By convention, an empty box is contained in every box.
+		bool contains(const box& other) const { return other.isEmpty() || (glm::all(glm::lessThanEqual(mins, other.mins)) && glm::all(glm::lessThanEqual(other.maxs, maxs))); }
+		bool intersects(const box& other) const { return glm::all(glm::lessThanEqual(other.mins, maxs)) && glm::all(glm::lessThanEqual(mins, other.maxs)); }
+
+		// Returns true if all components of the box are finite.
+		bool isFinite() const { return glm::all(glm::isfinite(mins)) && glm::all(glm::isfinite(maxs)); }
+
+		// Clamps a point to the bounds of the box.
+		Vec clamp(const Vec& point) const { return glm::clamp(point, mins, maxs); }
+
+		// Returns the center of the box.
+		Vec center() const { return mins + (maxs - mins) / T(2); }
+
+		// Returns the diagonal vector (maxs - mins).
+		Vec diagonal() const { return maxs - mins; }
+
+		// Returns one of the 2^n corners of the box.
+		// The index iCorner should be in the range [0, 2^n).
+		Vec getCorner(int iCorner) const {
+			Vec corner(0);
+			for (int j = 0; j < n; ++j) {
+				// If bit j of iCorner is set, choose maxs[j], otherwise choose mins[j].
+				corner[j] = (iCorner & (1 << j)) ? maxs[j] : mins[j];
+			}
+			return corner;
+		}
+
+		// Fills an array (of length 2^n) with all the box corners.
+		void getCorners(Vec* cornersOut) const {
+			int numCorners = 1 << n;
+			for (int i = 0; i < numCorners; ++i)
+				cornersOut[i] = getCorner(i);
+		}
+
+		// Computes the extents (min and max dot products) of the box along a given axis.
+		void getExtentsAlongAxis(const Vec& axis, T& outMin, T& outMax) const {
+			T dotCenter = glm::dot(center(), axis);
+			// For the diagonal, we use the absolute value of the axis components.
+			T dotDiagonal = glm::dot(diagonal(), glm::abs(axis));
+			outMin = dotCenter - dotDiagonal;
+			outMax = dotCenter + dotDiagonal;
+		}
+
+		// Returns the minimum dot product of the box with a given axis.
+		T dotMin(const Vec& axis) const
+		{
+			T dmin, dmax;
+			getExtentsAlongAxis(axis, dmin, dmax);
+			return dmin;
+		}
+
+		// Returns the maximum dot product of the box with a given axis.
+		T dotMax(const Vec& axis) const
+		{
+			T dmin, dmax;
+			getExtentsAlongAxis(axis, dmin, dmax);
+			return dmax;
+		}
+
+		// Returns a translated box.
+		box translate(const Vec& v) const { return box(mins + v, maxs + v); }
+
+		// Returns a box grown by vector v (expanding symmetrically in both directions).
+		box grow(const Vec& v) const { return box(mins - v, maxs + v); }
+
+		// Returns a box grown by a scalar value.
+		box grow(T v) const { return box(mins - Vec(v), maxs + Vec(v)); }
+
+		// Returns a box with its bounds rounded.
+		box round() const { return box(glm::round(mins), glm::round(maxs)); }
+
+		// Intersection operator.
+		box operator & (const box& other) const { return box(glm::max(mins, other.mins), glm::min(maxs, other.maxs)); }
+		box& operator &= (const box& other) { *this = *this & other; return *this; }
+
+		// Union operator (smallest box that contains both).
+		box operator | (const box& other) const { return box(glm::min(mins, other.mins), glm::max(maxs, other.maxs)); }
+		box& operator |= (const box& other) { *this = *this | other; return *this; }
+
+		// Expand the box to include a point.
+		box operator | (const Vec& v) const { return box(glm::min(mins, v), glm::max(maxs, v)); }
+		box& operator |= (const Vec& v) { *this = *this | v; return *this; }
+
+		// --- Equality Operators ---
+		bool operator == (const box& other) const { return glm::all(glm::equal(mins, other.mins)) && glm::all(glm::equal(maxs, other.maxs)); }
+		bool operator != (const box& other) const { return !(*this == other); }
+	};
+
+	using box3 = box<vec3>;
+	using box2 = box<vec2>;
+
+	inline box3 ComputeBox3(const glm::vec3& pos, const glm::quat& rot, const glm::vec3& scale)
+	{
+		box3 aabb;
+
+		glm::vec3 localCorners[4] = {
+			{-0.5f, -0.5f, 0.0f},
+			{ 0.5f, -0.5f, 0.0f},
+			{-0.5f,  0.5f, 0.0f},
+			{ 0.5f,  0.5f, 0.0f}
+		};
+
+		glm::vec3 worldCorners[4];
+		for (int i = 0; i < 4; i++) {
+			worldCorners[i] = pos + (rot * (localCorners[i] * scale));
+		}
+
+		aabb.mins = worldCorners[0];
+		aabb.maxs = worldCorners[0];
+
+		for (int i = 1; i < 4; i++)
+		{
+			aabb.mins = glm::min(aabb.mins, worldCorners[i]);
+			aabb.maxs = glm::max(aabb.maxs, worldCorners[i]);
+		}
+
+		return aabb;
+	}
+}
 
 export namespace glm {
 	// Base types
