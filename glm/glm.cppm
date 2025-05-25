@@ -26,7 +26,7 @@ export namespace glm {
 	using int3 = glm::ivec3;
 	using int4 = glm::ivec4;
 
-	using uint = unsigned int;
+	using uint = uint32_t;
 	using uint2 = glm::uvec2;
 	using uint3 = glm::uvec3;
 	using uint4 = glm::uvec4;
@@ -258,6 +258,66 @@ export namespace glm {
 		}
 
 		return BoxType{ worldMin, worldMax };
+	}
+
+	template<int n> uint vectorToSnorm8(const vec<n, float>& v); 
+	template<int n> vec<n, float> snorm8ToVector(uint v);
+
+	template<>
+	inline uint vectorToSnorm8(const float2& v)
+	{
+		float scale = 127.0f / sqrtf(v.x * v.x + v.y * v.y);
+		int x = int(v.x * scale);
+		int y = int(v.y * scale);
+		return (x & 0xff) | ((y & 0xff) << 8);
+	}
+
+	template<>
+	inline uint vectorToSnorm8(const float3& v)
+	{
+		float scale = 127.0f / sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+		int x = int(v.x * scale);
+		int y = int(v.y * scale);
+		int z = int(v.z * scale);
+		return (x & 0xff) | ((y & 0xff) << 8) | ((z & 0xff) << 16);
+	}
+
+	template<>
+	inline uint vectorToSnorm8(const float4& v)
+	{
+		float scale = 127.0f / sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+		int x = int(v.x * scale);
+		int y = int(v.y * scale);
+		int z = int(v.z * scale);
+		int w = int(v.w * scale);
+		return (x & 0xff) | ((y & 0xff) << 8) | ((z & 0xff) << 16) | ((w & 0xff) << 24);
+	}
+	
+	template<>
+	inline float2 snorm8ToVector(uint v)
+	{
+		float x = static_cast<signed char>(v & 0xff);
+		float y = static_cast<signed char>((v >> 8) & 0xff);
+		return max(float2(x, y) / 127.0f, float2(-1.f));
+	}
+
+	template<>
+	inline float3 snorm8ToVector(uint v)
+	{
+		float x = static_cast<signed char>(v & 0xff);
+		float y = static_cast<signed char>((v >> 8) & 0xff);
+		float z = static_cast<signed char>((v >> 16) & 0xff);
+		return max(float3(x, y, z) / 127.0f, float3(-1.f));
+	}
+
+	template<>
+	inline float4 snorm8ToVector(uint v)
+	{
+		float x = static_cast<signed char>(v & 0xff);
+		float y = static_cast<signed char>((v >> 8) & 0xff);
+		float z = static_cast<signed char>((v >> 16) & 0xff);
+		float w = static_cast<signed char>((v >> 24) & 0xff);
+		return max(float4(x, y, z, w) / 127.0f, float4(-1.f));
 	}
 }
 
