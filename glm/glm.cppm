@@ -260,6 +260,44 @@ export namespace glm {
 		return BoxType{ worldMin, worldMax };
 	}
 
+	inline Math::mat3 CreateMat3(const glm::vec2 position, float rotation, const glm::vec2 scale)
+	{
+		float tx = position.x;
+		float ty = position.y;
+		float sx = scale.x;
+		float sy = scale.y;
+		float c = cos(rotation);
+		float s = sin(rotation);
+
+		return Math::mat3(
+			sx * c, sx * s, tx,
+			-sy * s, sy * c, ty,
+			0.0f, 0.0f, 1.0f
+		);
+	};
+
+	inline Math::mat4 CreateMat4(const glm::vec3 position, quat rotation, const glm::vec3 scale)
+	{
+		Math::mat4 transform(1.0f);
+
+		// Set translation directly
+		transform[3][0] = position.x;
+		transform[3][1] = position.y;
+		transform[3][2] = position.z;
+
+		Math::mat4 rotationMatrix = Math::toMat4(rotation);
+
+		// Set scaling directly
+		transform[0][0] = scale.x;
+		transform[1][1] = scale.y;
+		transform[2][2] = scale.z;
+
+		// Combine transformation in-place
+		transform *= rotationMatrix;
+
+		return transform;
+	}
+
 	template<int n> uint vectorToSnorm8(const vec<n, float>& v); 
 	template<int n> vec<n, float> snorm8ToVector(uint v);
 
