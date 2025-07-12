@@ -18,39 +18,6 @@ export namespace Math = glm;
 
 export namespace glm {
 
-	using bool2 = glm::bvec2;
-	using bool3 = glm::bvec3;
-	using bool4 = glm::bvec4;
-
-	using int2 = glm::ivec2;
-	using int3 = glm::ivec3;
-	using int4 = glm::ivec4;
-
-	using uint = uint32_t;
-	using uint2 = glm::uvec2;
-	using uint3 = glm::uvec3;
-	using uint4 = glm::uvec4;
-
-	using float2 = glm::vec2;
-	using float3 = glm::vec3;
-	using float4 = glm::vec4;
-
-	using double2 = glm::dvec2;
-	using double3 = glm::dvec3;
-	using double4 = glm::dvec4;
-
-	using float2x2 = glm::mat2x2;
-	using float2x3 = glm::mat2x3;
-	using float2x4 = glm::mat2x4;
-
-	using float3x2 = glm::mat3x2;
-	using float3x3 = glm::mat3x3;
-	using float3x4 = glm::mat3x4;
-
-	using float4x2 = glm::mat4x2;
-	using float4x3 = glm::mat4x3;
-	using float4x4 = glm::mat4x4;
-
 	template <typename Vec>
 	struct box
 	{
@@ -357,6 +324,79 @@ export namespace glm {
 		float w = static_cast<signed char>((v >> 24) & 0xff);
 		return max(float4(x, y, z, w) / 127.0f, float4(-1.f));
 	}
+}
+
+export namespace glm {
+
+	// compatibility.hpp
+	using glm::lerp;
+	using glm::saturate;
+	using glm::atan2;
+	using glm::isfinite;
+
+	using glm::bool1;
+	using glm::bool2;
+	using glm::bool3;
+	using glm::bool4;
+
+	using glm::bool1x1;
+	using glm::bool2x2;
+	using glm::bool2x3;
+	using glm::bool2x4;
+	using glm::bool3x2;
+	using glm::bool3x3;
+	using glm::bool3x4;
+	using glm::bool4x2;
+	using glm::bool4x3;
+	using glm::bool4x4;
+
+	using glm::int1;
+	using glm::int2;
+	using glm::int3;
+	using glm::int4;
+
+	using glm::int1x1;
+	using glm::int2x2;
+	using glm::int2x3;
+	using glm::int2x4;
+	using glm::int3x2;
+	using glm::int3x3;
+	using glm::int3x4;
+	using glm::int4x2;
+	using glm::int4x3;
+	using glm::int4x4;
+
+	using glm::float1;
+	using glm::float2;
+	using glm::float3;
+	using glm::float4;
+
+	using glm::float1x1;
+	using glm::float2x2;
+	using glm::float2x3;
+	using glm::float2x4;
+	using glm::float3x2;
+	using glm::float3x3;
+	using glm::float3x4;
+	using glm::float4x2;
+	using glm::float4x3;
+	using glm::float4x4;
+
+	using glm::double1;
+	using glm::double2;
+	using glm::double3;
+	using glm::double4;
+
+	using glm::double1x1;
+	using glm::double2x2;
+	using glm::double2x3;
+	using glm::double2x4;
+	using glm::double3x2;
+	using glm::double3x3;
+	using glm::double3x4;
+	using glm::double4x2;
+	using glm::double4x3;
+	using glm::double4x4;
 }
 
 export namespace glm {
