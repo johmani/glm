@@ -366,6 +366,22 @@ export namespace glm {
 	using glm::int4x3;
 	using glm::int4x4;
 
+	using glm::uint1;
+	using glm::uint2;
+	using glm::uint3;
+	using glm::uint4;
+
+	using glm::uint1x1;
+	using glm::uint2x2;
+	using glm::uint2x3;
+	using glm::uint2x4;
+	using glm::uint3x2;
+	using glm::uint3x3;
+	using glm::uint3x4;
+	using glm::uint4x2;
+	using glm::uint4x3;
+	using glm::uint4x4;
+
 	using glm::float1;
 	using glm::float2;
 	using glm::float3;

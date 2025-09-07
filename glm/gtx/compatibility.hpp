@@ -93,6 +93,22 @@ namespace glm
 	typedef mat<4, 3, int, highp>		int4x3;			//!< \brief integer matrix with 4 x 3 components. (From GLM_GTX_compatibility extension)
 	typedef mat<4, 4, int, highp>		int4x4;			//!< \brief integer matrix with 4 x 4 components. (From GLM_GTX_compatibility extension)
 
+	typedef uint						uint1;			//!< \brief unsigned integer vector with 1 component. (From GLM_GTX_compatibility extension)
+	typedef vec<2, uint, highp>			uint2;			//!< \brief unsigned integer vector with 2 components. (From GLM_GTX_compatibility extension)
+	typedef vec<3, uint, highp>			uint3;			//!< \brief unsigned integer vector with 3 components. (From GLM_GTX_compatibility extension)
+	typedef vec<4, uint, highp>			uint4;			//!< \brief unsigned integer vector with 4 components. (From GLM_GTX_compatibility extension)
+
+	typedef uint						uint1x1;		//!< \brief unsigned integer matrix with 1 component. (From GLM_GTX_compatibility extension)
+	typedef mat<2, 2, uint, highp>		uint2x2;		//!< \brief unsigned integer matrix with 2 x 2 components. (From GLM_GTX_compatibility extension)
+	typedef mat<2, 3, uint, highp>		uint2x3;		//!< \brief unsigned integer matrix with 2 x 3 components. (From GLM_GTX_compatibility extension)
+	typedef mat<2, 4, uint, highp>		uint2x4;		//!< \brief unsigned integer matrix with 2 x 4 components. (From GLM_GTX_compatibility extension)
+	typedef mat<3, 2, uint, highp>		uint3x2;		//!< \brief unsigned integer matrix with 3 x 2 components. (From GLM_GTX_compatibility extension)
+	typedef mat<3, 3, uint, highp>		uint3x3;		//!< \brief unsigned integer matrix with 3 x 3 components. (From GLM_GTX_compatibility extension)
+	typedef mat<3, 4, uint, highp>		uint3x4;		//!< \brief unsigned integer matrix with 3 x 4 components. (From GLM_GTX_compatibility extension)
+	typedef mat<4, 2, uint, highp>		uint4x2;		//!< \brief unsigned integer matrix with 4 x 2 components. (From GLM_GTX_compatibility extension)
+	typedef mat<4, 3, uint, highp>		uint4x3;		//!< \brief unsigned integer matrix with 4 x 3 components. (From GLM_GTX_compatibility extension)
+	typedef mat<4, 4, uint, highp>		uint4x4;		//!< \brief unsigned integer matrix with 4 x 4 components. (From GLM_GTX_compatibility extension)
+
 	typedef float						float1;			//!< \brief single-qualifier floating-point vector with 1 component. (From GLM_GTX_compatibility extension)
 	typedef vec<2, float, highp>		float2;			//!< \brief single-qualifier floating-point vector with 2 components. (From GLM_GTX_compatibility extension)
 	typedef vec<3, float, highp>		float3;			//!< \brief single-qualifier floating-point vector with 3 components. (From GLM_GTX_compatibility extension)
